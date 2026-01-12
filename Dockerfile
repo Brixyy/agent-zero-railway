@@ -7,11 +7,13 @@
 
 FROM agent0ai/agent-zero:latest
 
-# Fix numpy/scipy binary incompatibility
-# scipy was compiled against a different numpy version, causing:
-# "ValueError: All ufuncs must have type numpy.ufunc"
-RUN /opt/venv-a0/bin/pip uninstall -y numpy scipy && \
-    /opt/venv-a0/bin/pip install numpy==1.26.4 scipy==1.13.1 --no-cache-dir
+# Fix numpy/scipy and related packages binary incompatibility
+# Multiple packages were compiled against different numpy versions
+# Force reinstall all numeric/ML packages with compatible versions
+RUN /opt/venv-a0/bin/pip uninstall -y numpy scipy scikit-learn && \
+    /opt/venv-a0/bin/pip install --force-reinstall numpy==1.26.4 && \
+    /opt/venv-a0/bin/pip install --force-reinstall scipy==1.13.1 && \
+    /opt/venv-a0/bin/pip install --force-reinstall scikit-learn==1.5.2 --no-cache-dir
 
 # Set default branch for Agent Zero
 ENV BRANCH=main
