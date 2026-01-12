@@ -8,12 +8,10 @@
 FROM agent0ai/agent-zero:latest
 
 # Fix numpy/scipy and related packages binary incompatibility
-# Multiple packages were compiled against different numpy versions
-# Force reinstall all numeric/ML packages with compatible versions
-RUN /opt/venv-a0/bin/pip uninstall -y numpy scipy scikit-learn && \
-    /opt/venv-a0/bin/pip install --force-reinstall numpy==1.26.4 && \
-    /opt/venv-a0/bin/pip install --force-reinstall scipy==1.13.1 && \
-    /opt/venv-a0/bin/pip install --force-reinstall scikit-learn==1.5.2 --no-cache-dir
+# Install numpy LAST with --no-deps to prevent dependency resolution from upgrading it
+RUN /opt/venv-a0/bin/pip uninstall -y numpy scipy scikit-learn numba && \
+    /opt/venv-a0/bin/pip install scipy==1.13.1 scikit-learn==1.4.2 numba==0.60.0 --no-cache-dir && \
+    /opt/venv-a0/bin/pip install numpy==1.26.4 --no-deps --force-reinstall --no-cache-dir
 
 # Set default branch for Agent Zero
 ENV BRANCH=main
